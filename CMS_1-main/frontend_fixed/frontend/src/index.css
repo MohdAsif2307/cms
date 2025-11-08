@@ -1,0 +1,28 @@
+/* ✅ Imports must always come first */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap");
+
+/* ✅ Tailwind layers */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ✅ Base reset and global styles */
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+/* ✅ Optional custom scrollbar / number input styling */
+@layer base {
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
+::-webkit-scrollbar {
+  display: none;
+}

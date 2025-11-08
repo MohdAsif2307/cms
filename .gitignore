@@ -1,0 +1,4 @@
+# Ignore large/binary files
+*.zip
+node_modules/
+.cache/
