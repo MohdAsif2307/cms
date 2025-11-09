@@ -18,7 +18,8 @@ const DashboardCard = ({ title, count, icon: Icon, bgColor }) => (
 );
 
 const Dashboard = () => {
-  const { user } = useSelector((state) => state.auth);
+  // Select user directly to avoid selector returning a new object
+  const user = useSelector((state) => (state && state.auth ? state.auth.user : null));
   const [stats, setStats] = React.useState({
     students: 0,
     faculty: 0,

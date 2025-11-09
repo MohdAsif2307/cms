@@ -8,9 +8,12 @@ import { MdOutlineHotel } from "react-icons/md";
 const StudentLayout = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const user = useSelector((state) => state.auth.user);
+  // Select user directly to avoid creating new references in the selector
+  const user = useSelector((state) => (state && state.auth ? state.auth.user : null));
 
   const logoutHandler = () => {
+    // this app stores the auth token as `userToken` (legacy `token` sometimes used elsewhere)
+    localStorage.removeItem("userToken");
     localStorage.removeItem("token");
     localStorage.removeItem("userType");
     navigate("/login");
@@ -25,7 +28,9 @@ const StudentLayout = ({ children }) => {
   ];
 
   // Only show hostel link if student has hostel access
-  if (user?.hostelStudentId) {
+  const localType = (typeof localStorage !== 'undefined' && localStorage.getItem('userType')) || null;
+  const isStudent = localType === 'Student' || !!user;
+  if (isStudent && user?.hostelStudentId) {
     links.push({
       path: "/student/hostel",
       label: "Hostel",

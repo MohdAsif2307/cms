@@ -13,6 +13,7 @@ import Login from "./Screens/Login";
 import ForgotPassword from "./Screens/ForgetPassword";
 import ResetPassword from "./Screens/UpdatePassword";
 import Dashboard from "./Screens/Dashboard";
+import AdminHome from "./Screens/Admin/Home";
 import Student from "./Screens/Admin/Student";
 import Faculty from "./Screens/Admin/Faculty";
 import Subject from "./Screens/Admin/Subject";
@@ -41,7 +42,7 @@ const App = () => {
             element={
               <ProtectedRoute>
                 <AdminLayout>
-                  <Dashboard />
+                  <AdminHome />
                 </AdminLayout>
               </ProtectedRoute>
             }

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { toast } from 'react-hot-toast';
+import axiosWrapper from '../../utils/AxiosWrapper';
 
 const StudentHostelDetails = () => {
   const [hostelData, setHostelData] = useState(null);
@@ -10,12 +10,12 @@ const StudentHostelDetails = () => {
   useEffect(() => {
     const fetchHostelDetails = async () => {
       try {
-        const response = await axios.get('/api/v1/hostel/student/hostel-details', {
+        const response = await axiosWrapper.get('/hostel/student/hostel-details', {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          }
+            Authorization: `Bearer ${localStorage.getItem('userToken')}`,
+          },
         });
-        
+
         if (response.data.success) {
           setHostelData(response.data.data);
         } else {

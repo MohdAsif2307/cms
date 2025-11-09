@@ -99,6 +99,24 @@ const Login = () => {
 
   const [selected, setSelected] = useState(USER_TYPES.STUDENT);
 
+  // Seeded credentials for local development convenience
+  const SEEDED_CREDS = {
+    Student: { email: 'student1@college.edu', password: 'student123' },
+    Faculty: { email: 'faculty1@college.edu', password: 'faculty123' },
+    Admin: { email: 'admin@gmail.com', password: 'admin123' },
+  };
+
+  // In dev mode, prefill the form with seeded credentials for the selected user type
+  useEffect(() => {
+    try {
+      if (import.meta?.env?.DEV) {
+        setFormData(SEEDED_CREDS[selected] || { email: '', password: '' });
+      }
+    } catch (e) {
+      // import.meta may not exist in some tooling — ignore silently
+    }
+  }, [selected]);
+
   const handleUserTypeSelect = (type) => {
     const userType = type.toLowerCase();
     setSelected(type);
@@ -129,6 +147,21 @@ const Login = () => {
         localStorage.setItem("userToken", token);
         localStorage.setItem("userType", selected);
         dispatch(setUserToken(token));
+      }
+
+      // If backend returned a user object, populate Redux so layouts and screens
+      // that read `state.auth.user` can render immediately without extra calls.
+      if (user) {
+        // sanitize if needed
+        try {
+          dispatch({ type: 'LOGIN_SUCCESS', payload: user });
+          dispatch({ type: 'LOGIN_SUCCESS', payload: user });
+          // also set legacy userData for older selectors
+          dispatch({ type: 'USER_DATA', payload: user });
+        } catch (e) {
+          // ignore dispatch errors in case store shape differs
+          console.warn('Could not dispatch user data', e);
+        }
       }
 
       // If HMS info present and contains an HMS token, open HMS frontend in a new tab

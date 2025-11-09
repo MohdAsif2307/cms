@@ -3,9 +3,10 @@ import { useSelector } from 'react-redux';
 import { Navigate } from 'react-router-dom';
 
 const ProtectedRoute = ({ children }) => {
-	const auth = useSelector((state) => state.auth) || {};
+	// Select the boolean directly to avoid selector memoization warnings
+	const isAuthenticatedFromState = useSelector((state) => (state && state.auth ? state.auth.isAuthenticated : false));
 	const isAuthenticated =
-		auth.isAuthenticated ||
+		isAuthenticatedFromState ||
 		!!localStorage.getItem('userToken') ||
 		!!localStorage.getItem('token');
 

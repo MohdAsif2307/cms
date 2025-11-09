@@ -5,11 +5,14 @@ import Navbar from '../components/Navbar';
 
 const AdminLayout = ({ children }) => {
   const navigate = useNavigate();
-  const { user } = useSelector((state) => state.auth);
+  // Select only the user object reference (avoids creating new objects every render)
+  const user = useSelector((state) => (state && state.auth ? state.auth.user : null));
 
   // Verify admin role
   React.useEffect(() => {
-    if (user && user.role !== 'admin') {
+    const localType = (typeof localStorage !== 'undefined' && localStorage.getItem('userType')) || null;
+    const isAdmin = localType === 'Admin' || (user && user.role === 'admin');
+    if (!isAdmin) {
       navigate('/login');
     }
   }, [user, navigate]);
