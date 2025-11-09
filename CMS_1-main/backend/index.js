@@ -5,6 +5,10 @@ require("dotenv").config({ path: path.resolve(__dirname, ".env") });
 const express = require("express");
 const cors = require("cors");
 const connectToMongo = require("./Database/db");
+const path = require('path');
+// Swagger
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require(path.join(__dirname, 'swagger.json'));
 
 const app = express();
 
@@ -15,6 +19,9 @@ connectToMongo();
 app.use(cors({ origin: process.env.FRONTEND_API_LINK || "*" }));
 app.use(express.json());
 app.use("/media", express.static(path.join(__dirname, "media")));
+
+// Serve API docs
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // --- Routes ---
 app.get("/", (req, res) => res.send("CMS Backend Running 🚀"));

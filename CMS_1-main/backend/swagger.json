@@ -1,0 +1,65 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "CMS Backend API",
+    "version": "1.0.0",
+    "description": "Minimal OpenAPI spec for CMS backend to test main endpoints via Swagger UI"
+  },
+  "servers": [
+    { "url": "http://localhost:4000", "description": "Local dev server" }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "Root health",
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/api/faculty/register": {
+      "post": {
+        "summary": "Register faculty",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "type": "object", "properties": { "firstName": {"type":"string"}, "lastName":{"type":"string"}, "email":{"type":"string"}, "password":{"type":"string"}, "designation":{"type":"string"} } } } }
+        },
+        "responses": { "201": { "description": "Created" } }
+      }
+    },
+    "/api/faculty/login": {
+      "post": {
+        "summary": "Login faculty",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "properties": { "email": {"type":"string"}, "password": {"type":"string"} } } } } },
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/api/student/register": {
+      "post": {
+        "summary": "Register student",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "properties": { "rollNo": {"type":"string"}, "firstName":{"type":"string"}, "lastName":{"type":"string"}, "email":{"type":"string"}, "password":{"type":"string"} } } } } },
+        "responses": { "201": { "description": "Created" } }
+      }
+    },
+    "/api/student/login": {
+      "post": {
+        "summary": "Login student",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "properties": { "email": {"type":"string"}, "password": {"type":"string"} } } } } },
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/api/branch": {
+      "get": {
+        "summary": "List branches",
+        "responses": { "200": { "description": "OK" } }
+      }
+    }
+  }
+}

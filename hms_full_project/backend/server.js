@@ -4,6 +4,10 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const http = require('http');
 const { Server } = require('socket.io');
+const path = require('path');
+// Swagger
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require(path.join(__dirname, 'swagger.json'));
 
 // ✅ Import all available routes
 const authRoutes = require('./routes/auth');
@@ -24,6 +28,9 @@ const io = new Server(server, { cors: { origin: clientOrigin, credentials: true 
 app.use(cors({ origin: clientOrigin, credentials: true }));
 app.use(express.json());
 app.set('io', io);
+
+// Serve API docs
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // ✅ Register routes with proper prefixes
 app.use('/api/auth', authRoutes);
