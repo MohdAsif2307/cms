@@ -1,0 +1,13 @@
+# HMS Student Sync Cron Job
+# Run at 2 AM every night to sync CMS students to HMS
+
+# Add to system crontab with: crontab < hms-sync.cron
+# Or to user crontab with: crontab -l | cat - hms-sync.cron | crontab -
+
+# Environment setup
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+HMS_PATH=/home/hoe_user/Downloads/csm-master/hms_full_project/backend
+
+# Run sync at 2 AM
+0 2 * * * cd $HMS_PATH && /usr/bin/npm run sync-students >> /var/log/hms-sync.log 2>&1

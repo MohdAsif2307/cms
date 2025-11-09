@@ -21,7 +21,11 @@ const Profile = ({ profileData }) => {
       <div className="flex items-center gap-8 mb-12 border-b pb-8 justify-between">
         <div className="flex items-center gap-8">
           <img
-            src={`${MEDIA_URL}/${profileData.profile}`}
+            src={
+              profileData.profile
+                ? `${MEDIA_URL}/${profileData.profile}`
+                : "data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 24 24'%3E%3Crect fill='%23e5e7eb' width='24' height='24'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-size='8' fill='%2373747a'%3EAvatar%3C/text%3E%3C/svg%3E"
+            }
             alt="Profile"
             className="w-40 h-40 rounded-full object-cover ring-4 ring-blue-500 ring-offset-4"
           />
@@ -30,10 +34,10 @@ const Profile = ({ profileData }) => {
               {`${profileData.firstName} ${profileData.lastName}`}
             </h1>
             <p className="text-lg text-gray-600 mb-1">
-              Employee ID: {profileData.employeeId}
+              Employee ID: {profileData.employeeId || "-"}
             </p>
             <p className="text-lg text-blue-600 font-medium">
-              {profileData.designation}
+              {profileData.designation || "-"}
             </p>
           </div>
         </div>
@@ -65,7 +69,7 @@ const Profile = ({ profileData }) => {
             </div>
             <div>
               <label className="text-sm font-medium text-gray-500">Phone</label>
-              <p className="text-gray-900">{profileData.phone}</p>
+              <p className="text-gray-900">{profileData.phone || "-"}</p>
             </div>
             <div>
               <label className="text-sm font-medium text-gray-500">
@@ -90,7 +94,7 @@ const Profile = ({ profileData }) => {
                 Joining Date
               </label>
               <p className="text-gray-900">
-                {formatDate(profileData.joiningDate)}
+                {profileData.joiningDate ? new Date(profileData.joiningDate).toLocaleDateString() : "-"}
               </p>
             </div>
             <div>
@@ -98,7 +102,7 @@ const Profile = ({ profileData }) => {
                 Salary
               </label>
               <p className="text-gray-900">
-                ₹{profileData.salary.toLocaleString()}
+                {profileData.salary ? `₹${profileData.salary.toLocaleString()}` : "-"}
               </p>
             </div>
             <div>
@@ -154,21 +158,21 @@ const Profile = ({ profileData }) => {
             <div>
               <label className="text-sm font-medium text-gray-500">Name</label>
               <p className="text-gray-900">
-                {profileData.emergencyContact.name}
-              </p>
+                  {profileData.emergencyContact?.name || "-"}
+                </p>
             </div>
             <div>
               <label className="text-sm font-medium text-gray-500">
                 Relationship
               </label>
               <p className="text-gray-900">
-                {profileData.emergencyContact.relationship}
+                {profileData.emergencyContact?.relationship || "-"}
               </p>
             </div>
             <div>
               <label className="text-sm font-medium text-gray-500">Phone</label>
               <p className="text-gray-900">
-                {profileData.emergencyContact.phone}
+                {profileData.emergencyContact?.phone || "-"}
               </p>
             </div>
           </div>

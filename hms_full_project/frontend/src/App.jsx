@@ -15,7 +15,8 @@ import { AuthProvider, useAuth } from "./hooks/useAuth";
 
 function PrivateRoute({ children }) {
   const { user } = useAuth();
-  if (!user) return <Navigate to="/login" replace />;
+  const isSSO = window.location.pathname === '/sso/complete' || new URLSearchParams(window.location.search).has('transfer');
+  if (!user && !isSSO) return <Navigate to="/login" replace />;
   return children;
 }
 

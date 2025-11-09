@@ -30,6 +30,8 @@ app.use("/api/exam", require("./routes/exam.route"));
 app.use("/api/marks", require("./routes/marks.route"));
 // SSO helper route
 app.use('/api/sso', require('./routes/sso.route'));
+// Local dev stub for hostel endpoints when HMS isn't available
+app.use('/api/hostel', require('./routes/hostel.mock.route'));
 
 // --- Error handler ---
 app.use((err, req, res, next) => {

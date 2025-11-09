@@ -13,6 +13,8 @@ import Login from "./Screens/Login";
 import ForgotPassword from "./Screens/ForgetPassword";
 import ResetPassword from "./Screens/UpdatePassword";
 import Dashboard from "./Screens/Dashboard";
+import FacultyHome from "./Screens/Faculty/Home";
+import StudentHome from "./Screens/Student/Home";
 import AdminHome from "./Screens/Admin/Home";
 import Student from "./Screens/Admin/Student";
 import Faculty from "./Screens/Admin/Faculty";
@@ -22,6 +24,7 @@ import Profile from "./Screens/Profile";
 import UploadMarks from "./Screens/Faculty/UploadMarks";
 import HostelAdminDashboard from "./Screens/Hostel/AdminDashboard";
 import StudentHostelDetails from "./Screens/Hostel/StudentDetails";
+import LostAndFound from "./pages/LostAndFound";
 
 const App = () => {
   return (
@@ -94,7 +97,7 @@ const App = () => {
             element={
               <ProtectedRoute>
                 <FacultyLayout>
-                  <Dashboard />
+                  <FacultyHome />
                 </FacultyLayout>
               </ProtectedRoute>
             }
@@ -116,7 +119,17 @@ const App = () => {
             element={
               <ProtectedRoute>
                 <StudentLayout>
-                  <Dashboard />
+                  <StudentHome />
+                </StudentLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/lost-and-found"
+            element={
+              <ProtectedRoute>
+                <StudentLayout>
+                  <LostAndFound />
                 </StudentLayout>
               </ProtectedRoute>
             }

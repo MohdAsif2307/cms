@@ -33,10 +33,11 @@ const loginFacultyController = async (req, res) => {
       employeeId: user.employeeId,
     };
 
-    // Build response and include HMS info when user is hostel admin
+    // Build response and include HMS info for hostel admins
     const response = { token, user: sanitized };
     const hmsFrontend = process.env.HMS_FRONTEND_URL || process.env.HMS_URL || null;
 
+    // Faculty with hostel designation -> HMS admin access
     if (user.designation && user.designation.toLowerCase().includes('hostel')) {
       // try to request an HMS SSO token from HMS backend
       try {

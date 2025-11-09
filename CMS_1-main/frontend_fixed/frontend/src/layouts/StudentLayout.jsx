@@ -9,12 +9,23 @@ const StudentLayout = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
   // Select user directly to avoid creating new references in the selector
-  const user = useSelector((state) => (state && state.auth ? state.auth.user : null));
+  const reduxUser = useSelector((state) => (state && state.auth ? state.auth.user : null));
+  // fallback to persisted user stored at login for immediate UI hydration
+  let user = reduxUser;
+  if (!user) {
+    try {
+      const raw = localStorage.getItem('userData');
+      if (raw) user = JSON.parse(raw);
+    } catch (e) {
+      user = reduxUser;
+    }
+  }
 
   const logoutHandler = () => {
     // this app stores the auth token as `userToken` (legacy `token` sometimes used elsewhere)
     localStorage.removeItem("userToken");
     localStorage.removeItem("token");
+    localStorage.removeItem('userData');
     localStorage.removeItem("userType");
     navigate("/login");
   };
@@ -30,7 +41,17 @@ const StudentLayout = ({ children }) => {
   // Only show hostel link if student has hostel access
   const localType = (typeof localStorage !== 'undefined' && localStorage.getItem('userType')) || null;
   const isStudent = localType === 'Student' || !!user;
-  if (isStudent && user?.hostelStudentId) {
+  // debug: log user/localType for layout decisions
+  try {
+    if (import.meta?.env?.DEV || (typeof localStorage !== 'undefined' && localStorage.getItem('AXIOS_DEBUG') === '1')) {
+      // eslint-disable-next-line no-console
+      console.debug('[StudentLayout] user:', user, 'localType:', localType, 'hostelStudentId:', user?.hostelStudentId);
+    }
+  } catch (e) {}
+  // Show Hostel link for students. If student hasn't got a hostelStudentId yet,
+  // the Hostel page can handle absence (or redirect). Showing the link improves
+  // discoverability during local testing.
+  if (isStudent) {
     links.push({
       path: "/student/hostel",
       label: "Hostel",

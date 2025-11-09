@@ -95,7 +95,22 @@ router.get('/accept', async (req, res) => {
       }
 
       const hmsSecret = process.env.HMS_JWT_SECRET || process.env.JWT_SECRET || 'hms_default_secret';
-      const hmsPayload = { id: payload.id || null, role: payload.role || 'student', from_sso: true };
+      // Map CMS faculty with hostel admin designation to HMS admin role
+      const isHostelAdmin = payload.role === 'faculty' && 
+        payload.designation && 
+        (payload.designation.toLowerCase().includes('hostel admin') || 
+         payload.designation.toLowerCase().includes('hostel administrator'));
+
+      // Students get student role, hostel admin faculty get admin role
+      const hmsRole = isHostelAdmin ? 'admin' : (payload.role === 'student' ? 'student' : 'staff');
+      
+      const hmsPayload = { 
+        id: payload.id || null,
+        role: hmsRole,
+        from_sso: true,
+        cmsId: payload.id,
+        designation: payload.designation
+      };
       const hmsToken = jwt.sign(hmsPayload, hmsSecret, { expiresIn: '8h' });
 
       // set cookie
@@ -103,8 +118,8 @@ router.get('/accept', async (req, res) => {
       res.cookie('hms_token', hmsToken, cookieOpts);
 
       const frontend = process.env.HMS_FRONTEND_URL || process.env.HMS_URL || 'http://localhost:5173';
-      // redirect to frontend SSO completion page
-      return res.redirect(`${frontend.replace(/\/$/, '')}/sso/complete`);
+      // redirect to frontend SSO completion page with 302
+      return res.redirect(302, `${frontend.replace(/\/$/, '')}/sso/complete`);
     } catch (err) {
       console.error('sso accept -> cms validate error:', err.message);
       return res.status(401).send('Transfer validation failed');

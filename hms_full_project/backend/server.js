@@ -18,7 +18,7 @@ const ssoRoutes = require('./routes/sso');
 const app = express();
 const server = http.createServer(app);
 // Configure CORS to allow credentials so server can set cookies during SSO
-const clientOrigin = process.env.HMS_FRONTEND_URL || process.env.VITE_FRONTEND_URL || 'http://localhost:5173';
+const clientOrigin = process.env.HMS_FRONTEND_URL || process.env.VITE_FRONTEND_URL || 'http://localhost:5174';
 const io = new Server(server, { cors: { origin: clientOrigin, credentials: true } });
 
 app.use(cors({ origin: clientOrigin, credentials: true }));

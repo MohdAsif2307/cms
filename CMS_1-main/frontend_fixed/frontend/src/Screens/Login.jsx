@@ -148,19 +148,48 @@ const Login = () => {
         localStorage.setItem("userType", selected);
         dispatch(setUserToken(token));
       }
+      // After storing token, fetch canonical user details from the backend
+      // (e.g. /faculty/my-details, /student/my-details, /admin/my-details).
+      // This ensures the app has the full, canonical user object for layouts
+      // and role-specific screens.
+      try {
+        const rolePath = `/${selected.toLowerCase()}`;
+        const meResp = await axiosWrapper.get(`${rolePath}/my-details`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const me = meResp?.data?.data || user || null;
+        if (me) {
+          // use shared normalizer and attach hms/token when available
+          const normalized = (await import("../utils/normalizeUser")).default(me, selected, hms, token);
 
-      // If backend returned a user object, populate Redux so layouts and screens
-      // that read `state.auth.user` can render immediately without extra calls.
-      if (user) {
-        // sanitize if needed
-        try {
-          dispatch({ type: 'LOGIN_SUCCESS', payload: user });
-          dispatch({ type: 'LOGIN_SUCCESS', payload: user });
-          // also set legacy userData for older selectors
-          dispatch({ type: 'USER_DATA', payload: user });
-        } catch (e) {
-          // ignore dispatch errors in case store shape differs
-          console.warn('Could not dispatch user data', e);
+          // debug: show what we're about to dispatch and localStorage
+          try {
+            if (import.meta?.env?.DEV || localStorage.getItem('AXIOS_DEBUG') === '1') {
+              // eslint-disable-next-line no-console
+              console.debug('[Login] dispatching normalized user:', normalized);
+              // eslint-disable-next-line no-console
+              console.debug('[Login] localStorage keys userType, userToken, token:', localStorage.getItem('userType'), localStorage.getItem('userToken'), localStorage.getItem('token'));
+            }
+          } catch (e) {}
+
+          // persist user for quick UI hydration (legacy components/readers may rely on it)
+          try { localStorage.setItem('userData', JSON.stringify(normalized)); } catch (e) {}
+          dispatch({ type: 'LOGIN_SUCCESS', payload: normalized });
+          dispatch({ type: 'USER_DATA', payload: normalized });
+        }
+      } catch (e) {
+        // If the /my-details call fails, fall back to any user object returned
+        if (user) {
+          try {
+            const normalized = (await import("../utils/normalizeUser")).default(user, selected, hms, token);
+            // eslint-disable-next-line no-console
+            if (import.meta?.env?.DEV || localStorage.getItem('AXIOS_DEBUG') === '1') console.debug('[Login] falling back and dispatching user:', normalized);
+            dispatch({ type: 'LOGIN_SUCCESS', payload: normalized });
+            dispatch({ type: 'USER_DATA', payload: normalized });
+          } catch (ex) {
+            dispatch({ type: 'LOGIN_SUCCESS', payload: user });
+            dispatch({ type: 'USER_DATA', payload: user });
+          }
         }
       }
 

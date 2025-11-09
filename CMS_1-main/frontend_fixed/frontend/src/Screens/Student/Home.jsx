@@ -4,6 +4,8 @@ import { toast, Toaster } from "react-hot-toast";
 import Notice from "../Notice";
 import { useDispatch } from "react-redux";
 import { setUserData } from "../../redux/actions";
+import normalizeUser from "../../utils/normalizeUser";
+import { getBranchNameById } from "../../utils/branchCache";
 import axiosWrapper from "../../utils/AxiosWrapper";
 import Timetable from "./Timetable";
 import Material from "./Material";
@@ -40,8 +42,13 @@ const Home = () => {
         },
       });
       if (response.data.success) {
-        setProfileData(response.data.data);
-        dispatch(setUserData(response.data.data));
+        let normalized = normalizeUser(response.data.data, 'Student');
+        if (normalized.branchId && normalized.branchId._id && !normalized.branchId.name) {
+          const name = await getBranchNameById(normalized.branchId._id);
+          if (name) normalized = { ...normalized, branchId: { ...normalized.branchId, name } };
+        }
+        setProfileData(normalized);
+        dispatch(setUserData(normalized));
       } else {
         toast.error(response.data.message);
       }
