@@ -5,7 +5,6 @@ require("dotenv").config({ path: path.resolve(__dirname, ".env") });
 const express = require("express");
 const cors = require("cors");
 const connectToMongo = require("./Database/db");
-const path = require('path');
 // Swagger
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require(path.join(__dirname, 'swagger.json'));
